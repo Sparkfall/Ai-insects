@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>投资者类型评估问卷</title>
+  <style>
+    :root {
+      --primary: #4A90E2;    /* 主蓝 */
+      --secondary: #1347e2; /* 辅助绿 */
+      --accent: #FF6B6B;    /* 强调红 */
+      --background: #F5F7FA; /* 背景灰 */
+      --text: #2C3E50;      /* 正文深灰 */
+    }
+
+    body {
+      font-family: 'Helvetica Neue', sans-serif;
+      background: var(--background);
+      color: var(--text);
+      line-height: 1.6;
+      margin: 0;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: 20px auto;
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      padding: 30px;
+    }
+
+    h2 {
+      color: #4a68e2;
+      border-bottom: 2px solid var(--secondary);
+      padding-bottom: 10px;
+    }
+
+    .question-group {
+      position: relative;
+      margin: 17px 0;
+      padding: 20px;
+      background: #F9F9F9;
+      border-radius: 8px;
+    }
+
+    .question {
+      margin: 20px 0;
+    }
+
+    .question p {
+      font-weight: 500;
+      margin-bottom: 15px;
+      font-size: 19px;
+    }
+
+    .options label {
+      display: block;
+      margin-bottom: 4px;
+      padding: 12px 20px;
+      margin: 6px 0;
+      background: white;
+      border: 2px solid #E0E0E0;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .options label:hover {
+      border-color: var(--primary);
+    }
+
+    input[type="radio"]:checked + label {
+      background: var(--primary);
+      color: white;
+      border-color: var(--primary);
+    }
+
+    button {
+      background: var(--secondary);
+      color: white;
+      padding: 12px 30px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 16px;
+      transition: transform 0.2s;
+    }
+
+    button:hover {
+      transform: translateY(-2px);
+      opacity: 0.9;
+    }
+
+    #result {
+      margin-top: 30px;
+      padding: 20px;
+      background: var(--background);
+      border-radius: 8px;
+      display: none;
+    }
+
+    #result.show {
+      display: block;
+      animation: fadeIn 0.4s;
+    }
+    #marketEnv {
+      width: 100px !important;
+      padding: 0.75rem 1rem;
+      border: 2px solid #e2e8f0;
+      border-radius: 8px;
+      font-size: 1rem;
+      background-color: white;
+      transition: all 0.2s ease;
+      appearance: none;
+      background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%234a5568%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E");
+      background-repeat: no-repeat;
+      background-position: right 0.75rem center;
+      background-size: 0.65em auto;
+    }
+
+    #marketEnv:hover {
+      border-color: #cbd5e0;
+      cursor: pointer;
+    }
+
+    #marketEnv:focus {
+      outline: none;
+      border-color: #4299e1;
+      box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.2);
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <h2>投资者理财倾向问卷</h2>
+
+<!--  &lt;!&ndash; 市场环境选择 &ndash;&gt;-->
+<!--  <div class="question-group">-->
+<!--    <label>当前市场环境：</label>-->
+<!--    <select id="marketEnv">-->
+<!--      <option value="bull">牛市</option>-->
+<!--      <option value="bear">熊市</option>-->
+<!--      <option value="volatile">震荡市</option>-->
+<!--      <option value="balanced">平衡市</option>-->
+<!--    </select>-->
+<!--  </div>-->
+
+  <form id="surveyForm">
+    <!-- 投资目标 -->
+    <div class="question-group">
+      <h3>一、投资目标</h3>
+      <div class="question">
+        <p>1. 您的投资目标是？</p>
+        <div class="options">
+          <label><input type="radio" name="q1" value="1" required> 保值，防止资产缩水</label>
+          <label><input type="radio" name="q1" value="2"> 稳健增值</label>
+          <label><input type="radio" name="q1" value="3"> 实现高收益</label>
+          <label><input type="radio" name="q1" value="4"> 快速翻倍或赚取超额收益</label>
+        </div>
+      </div>
+      <!-- 问题2-4 -->
+      <div class="question">
+        <p>2. 您的投资期限一般为？</p>
+        <div class="options">
+          <label><input type="radio" name="q2" value="1" required> 1年以内</label>
+          <label><input type="radio" name="q2" value="2"> 1-3年</label>
+          <label><input type="radio" name="q2" value="3"> 3-5年</label>
+          <label><input type="radio" name="q2" value="4"> 5年以上</label>
+        </div>
+      </div>
+      <div class="question">
+        <p>3. 您希望获得的年化收益率是多少？</p>
+        <div class="options">
+          <label><input type="radio" name="q3" value="1" required> 3%以内</label>
+          <label><input type="radio" name="q3" value="2"> 3%-5%</label>
+          <label><input type="radio" name="q3" value="3"> 5%-10%</label>
+          <label><input type="radio" name="q3" value="4"> 10%以上</label>
+        </div>
+      </div>
+      <div class="question">
+        <p>4. 您更偏好以下哪种投资？</p>
+        <div class="options">
+          <label><input type="radio" name="q4" value="1" required> 定期存款/国债</label>
+          <label><input type="radio" name="q4" value="2"> 固收类产品</label>
+          <label><input type="radio" name="q4" value="3"> 股票型基金</label>
+          <label><input type="radio" name="q4" value="4"> 个股、期货等高波动资产</label>
+        </div>
+      </div>
+    </div>
+
+    <!-- 投资经验 -->
+    <div class="question-group">
+      <h3>二、投资经验</h3>
+      <div class="question">
+        <p>5. 您的投资年限是？</p>
+        <div class="options">
+          <label><input type="radio" name="q5" value="1" required> 无经验</label>
+          <label><input type="radio" name="q5" value="2"> 1年以内</label>
+          <label><input type="radio" name="q5" value="3"> 1-3年</label>
+          <label><input type="radio" name="q5" value="4"> 3年以上</label>
+        </div>
+      </div>
+      <!-- 问题6-8 -->
+      <div class="question">
+        <p>6. 您投资时最常使用哪些工具？</p>
+        <div class="options">
+          <label><input type="radio" name="q6" value="1" required> 仅存款、国债</label>
+          <label><input type="radio" name="q6" value="2"> 股票、基金</label>
+          <label><input type="radio" name="q6" value="3"> ETF、REITs</label>
+          <label><input type="radio" name="q6" value="4"> 期权、期货</label>
+        </div>
+      </div>
+      <div class="question">
+        <p>7. 是否关注市场信息？</p>
+        <div class="options">
+          <label><input type="radio" name="q7" value="1" required> 不关注</label>
+          <label><input type="radio" name="q7" value="2"> 偶尔关注</label>
+          <label><input type="radio" name="q7" value="3"> 定期跟踪</label>
+          <label><input type="radio" name="q7" value="4"> 深度分析</label>
+        </div>
+      </div>
+      <div class="question">
+        <p>8. 面对市场下跌时的反应？</p>
+        <div class="options">
+          <label><input type="radio" name="q8" value="1" required> 迅速卖出</label>
+          <label><input type="radio" name="q8" value="2"> 部分减仓</label>
+          <label><input type="radio" name="q8" value="3"> 保持观望</label>
+          <label><input type="radio" name="q8" value="4"> 抄底加仓</label>
+        </div>
+      </div>
+    </div>
+
+    <!-- 财务状况 -->
+    <div class="question-group">
+      <h3>三、财务状况</h3>
+      <div class="question">
+        <p>9. 您的年收入是？</p>
+        <div class="options">
+          <label><input type="radio" name="q9" value="1" required> 5万元以下</label>
+          <label><input type="radio" name="q9" value="2"> 5-20万元</label>
+          <label><input type="radio" name="q9" value="3"> 20-50万元</label>
+          <label><input type="radio" name="q9" value="4"> 50万元以上</label>
+        </div>
+      </div>
+      <!-- 问题10-12 -->
+      <div class="question">
+        <p>10. 储蓄状况如何？</p>
+        <div class="options">
+          <label><input type="radio" name="q10" value="1" required> 基本无储蓄</label>
+          <label><input type="radio" name="q10" value="2"> 少量积蓄</label>
+          <label><input type="radio" name="q10" value="3"> 3-6个月备用金</label>
+          <label><input type="radio" name="q10" value="4"> 充裕资产</label>
+        </div>
+      </div>
+      <div class="question">
+        <p>11. 投资资金占比？</p>
+        <div class="options">
+          <label><input type="radio" name="q11" value="1" required> 5%以内</label>
+          <label><input type="radio" name="q11" value="2"> 5%-10%</label>
+          <label><input type="radio" name="q11" value="3"> 10%-30%</label>
+          <label><input type="radio" name="q11" value="4"> 30%以上</label>
+        </div>
+      </div>
+      <div class="question">
+        <p>12. 债务水平如何？</p>
+        <div class="options">
+          <label><input type="radio" name="q12" value="1" required> 负债较重</label>
+          <label><input type="radio" name="q12" value="2"> 有部分贷款</label>
+          <label><input type="radio" name="q12" value="3"> 负债较少</label>
+          <label><input type="radio" name="q12" value="4"> 无负债</label>
+        </div>
+      </div>
+    </div>
+
+    <!-- 风险承受能力 -->
+    <div class="question-group">
+      <h3>四、风险承受能力</h3>
+      <div class="question">
+        <p>13. 面对10%亏损的反应？</p>
+        <div class="options">
+          <label><input type="radio" name="q13" value="1" required> 立即止损</label>
+          <label><input type="radio" name="q13" value="2"> 部分减仓</label>
+          <label><input type="radio" name="q13" value="3"> 持有等待</label>
+          <label><input type="radio" name="q13" value="4"> 加仓抄底</label>
+        </div>
+      </div>
+      <!-- 问题14-17 -->
+      <div class="question">
+        <p>14. 连续3天大跌的策略？</p>
+        <div class="options">
+          <label><input type="radio" name="q14" value="1" required> 清仓退出</label>
+          <label><input type="radio" name="q14" value="2"> 部分减仓</label>
+          <label><input type="radio" name="q14" value="3"> 保持观望</label>
+          <label><input type="radio" name="q14" value="4"> 抄底加仓</label>
+        </div>
+      </div>
+      <div class="question">
+        <p>15. 对热门上涨资产的操作？</p>
+        <div class="options">
+          <label><input type="radio" name="q15" value="1" required> 完全观望</label>
+          <label><input type="radio" name="q15" value="2"> 部分加仓</label>
+          <label><input type="radio" name="q15" value="3"> 全面加仓</label>
+          <label><input type="radio" name="q15" value="4"> 快速追高</label>
+        </div>
+      </div>
+      <div class="question">
+        <p>16. 是否参与高风险投资？</p>
+        <div class="options">
+          <label><input type="radio" name="q16" value="1" required> 不考虑</label>
+          <label><input type="radio" name="q16" value="2"> 少量参与</label>
+          <label><input type="radio" name="q16" value="3"> 适度参与</label>
+          <label><input type="radio" name="q16" value="4"> 积极参与</label>
+        </div>
+      </div>
+      <div class="question">
+        <p>17. 能接受的最大亏损？</p>
+        <div class="options">
+          <label><input type="radio" name="q17" value="1" required> 不超过5%</label>
+          <label><input type="radio" name="q17" value="2"> 5%-10%</label>
+          <label><input type="radio" name="q17" value="3"> 10%-20%</label>
+          <label><input type="radio" name="q17" value="4"> 20%以上</label>
+        </div>
+      </div>
+    </div>
+
+    <!-- 市场情绪 -->
+    <div class="question-group">
+      <h3>五、市场情绪</h3>
+      <div class="question">
+        <p>18. 市场上涨时的决策？</p>
+        <div class="options">
+          <label><input type="radio" name="q18" value="1" required> 立即止盈</label>
+          <label><input type="radio" name="q18" value="2"> 部分止盈</label>
+          <label><input type="radio" name="q18" value="3"> 保持不变</label>
+          <label><input type="radio" name="q18" value="4"> 加仓追涨</label>
+        </div>
+      </div>
+      <!-- 问题19-20 -->
+      <div class="question">
+        <p>19. 面对利好消息的反应？</p>
+        <div class="options">
+          <label><input type="radio" name="q19" value="1" required> 持观望态度</label>
+          <label><input type="radio" name="q19" value="2"> 小幅加仓</label>
+          <label><input type="radio" name="q19" value="3"> 积极加仓</label>
+          <label><input type="radio" name="q19" value="4"> 重仓买入</label>
+        </div>
+      </div>
+      <div class="question">
+        <p>20. 快速下跌时的策略？</p>
+        <div class="options">
+          <label><input type="radio" name="q20" value="1" required> 立刻平仓</label>
+          <label><input type="radio" name="q20" value="2"> 部分减仓</label>
+          <label><input type="radio" name="q20" value="3"> 观望等待</label>
+          <label><input type="radio" name="q20" value="4"> 趁低加仓</label>
+        </div>
+      </div>
+    </div>
+
+    <button type="button" id="submit">立即评估</button>
+  </form>
+
+  <div id="result"></div>
+</div>
+
+<script>
+  document.getElementById('submit').addEventListener('click', function () {
+    console.log('click');
+    let data = calculateResult();
+    const trans = document.createElement('button');
+    trans.type = 'button';
+    trans.textContent = '提交';
+    document.getElementById('result').appendChild(trans);
+    trans.addEventListener('click', function () {
+      window.location.href = `./test/test.html?data=${encodeURIComponent(data)}`;
+    })
+  });
+  const WEIGHT_CONFIG = {
+    bull:      [0.20, 0.15, 0.20, 0.20, 0.30],
+    bear:      [0.20, 0.15, 0.25, 0.20, 0.20],
+    volatile:  [0.15, 0.20, 0.15, 0.25, 0.25],
+    balanced:  [0.25, 0.15, 0.20, 0.20, 0.20]
+  };
+
+  const DIMENSION_MAP = [
+    { // 投资目标
+      questions: ['q1','q2','q3','q4'],
+      maxScore: 4 * 4, // 每个问题4分，共4题
+      weightIndex: 0
+    },
+    { // 投资经验
+      questions: ['q5','q6','q7','q8'],
+      maxScore: 4 * 4,
+      weightIndex: 1
+    },
+    { // 财务状况
+      questions: ['q9','q10','q11','q12'],
+      maxScore: 4 * 4,
+      weightIndex: 2
+    },
+    { // 风险承受
+      questions: ['q13','q14','q15','q16','q17'],
+      maxScore: 5 * 4,
+      weightIndex: 3
+    },
+    { // 市场情绪
+      questions: ['q18','q19','q20'],
+      maxScore: 3 * 4,
+      weightIndex: 4
+    }
+  ];
+
+  function calculateResult() {
+    try {
+      // 验证所有问题已回答
+      const allAnswered = [...document.querySelectorAll('input[type="radio"]')]
+        .reduce((acc, el) => acc + (el.checked ? 1 : 0), 0) === 20;
+      if (!allAnswered) return alert('请完成所有问题');
+
+      // 获取市场环境
+      // const market = document.getElementById('marketEnv').value;
+      const market = 'bull';
+      // 计算各维度得分
+      const dimensionScores = DIMENSION_MAP.map(dim => {
+        const score = dim.questions.reduce((sum, q) =>
+          sum + parseInt(document.querySelector(`[name="${q}"]:checked`).value), 0);
+        return (score / dim.maxScore) * 100; // 标准化为百分比
+      });
+
+      // 应用动态权重
+      const weights = WEIGHT_CONFIG[market];
+      const totalScore = dimensionScores.reduce((sum, score, index) =>
+        sum + (score * weights[index]), 0).toFixed(1);
+
+      // 显示结果
+      showResult(totalScore);
+      return getInvestorType(totalScore).name;
+    } catch (error) {
+      console.error('计算错误:', error);
+      alert('计算结果出错，请检查输入');
+    }
+  }
+
+  function showResult(score) {
+    const type = getInvestorType(score);
+    const resultDiv = document.getElementById('result');
+    resultDiv.innerHTML = `
+                <h3>评估结果</h3>
+                <p>综合得分：<strong>${score}</strong></p>
+                <p>投资类型：<span style="color:var(--primary)">${type.name}</span></p>
+                <p>${type.description}</p>
+            `;
+    resultDiv.className = 'show';
+  }
+
+  function getInvestorType(score) {
+    score = parseFloat(score);
+    const types = [
+      {max: 30, name: '保守', desc: '偏好低风险产品，注重本金安全'},
+      {max: 50, name: '稳健', desc: '平衡型策略，追求稳定收益'},
+      {max: 70, name: '成长', desc: '接受适度波动，追求较高收益'},
+      {max: 85, name: '激进', desc: '高风险偏好，追求超额回报'},
+      {max: Infinity, name: '投机', desc: '极端风险偏好，寻求短期暴利'}
+    ];
+    const type = types.find(t => score <= t.max);
+    return {
+      name: type.name,
+      description: `${type.desc}（得分区间：≤${type.max}）`
+    };
+  }
+</script>
+</body>
+</html>

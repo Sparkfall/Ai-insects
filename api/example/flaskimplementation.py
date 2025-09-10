@@ -12,7 +12,7 @@ app.config['SECRET_KEY'] = '3b6dc7732e7647d85f0dcbb44b337b504d1cc03870a358d290f1
 
 def get_db_connection():
     conn = psycopg2.connect(
-        dbname='shrimp',
+        dbname='insect',
         user='postgres',
         password="admin",
         host='localhost',

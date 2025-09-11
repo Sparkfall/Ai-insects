@@ -115,7 +115,7 @@ def putfile():
 # 定义页面路由，默认支持GET请求
 @app.route('/index', methods=['GET'])
 def test():
-    with open('web/index.html', 'rb', encoding='utf-8') as f:
+    with open('web\index.html', 'rb') as f:
         html_content = f.read()
     response = make_response(html_content)
     response.headers["Content-Type"] = "text/html; charset=utf-8"

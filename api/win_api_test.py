@@ -49,7 +49,7 @@ def listfile():
     message = ''
     try:
         cameraID, date = data['cameraID'],data['date']
-        dir_path = "../images/" + cameraID
+        dir_path = "images/" + cameraID
         if cameraID in cameraList:
             Date_items = os.listdir(dir_path)
             if date in Date_items:
@@ -94,7 +94,7 @@ def putfile():
         return jsonify({'status':status,'message': '未选择文件'}), 400
     allowance = '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
     if file and allowance:
-        file_dir = os.path.join(f"../images/{cameraID}/{date}/", filename)
+        file_dir = os.path.join(f"images/{cameraID}/{date}/", filename)
         file.save(file_dir)
         
         try:
@@ -115,7 +115,7 @@ def putfile():
 # 定义页面路由，默认支持GET请求
 @app.route('/index', methods=['GET'])
 def test():
-    with open('../web/index.html', 'rb') as f:
+    with open('web\index.html', 'rb') as f:
         html_content = f.read()
     response = make_response(html_content)
     response.headers["Content-Type"] = "text/html; charset=utf-8"

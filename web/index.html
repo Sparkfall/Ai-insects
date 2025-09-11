@@ -1,10 +1,141 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>$Title$</title>
+    <meta charset="UTF-8">
+    <title>main</title>
+    <link rel="stylesheet" href="./css/bootstrap.min.css">
+    <script src="./js/bootstrap.bundle.min.js"></script>
 </head>
 <body>
-$END$
+<div class="container" style="margin-top: 30px;gap: 20px;display: flex;flex-direction: column;">
+  <input type="text" id="host" placeholder="host" value="localhost">
+  <input type="text" id="port" placeholder="port" value="8088">
+
+  <!--listfile-->
+  <select id="cameraID">
+    <option value="camera1">camera1</option>
+    <option value="camera2">camera2</option>
+  </select>
+  <select id="date">
+    <option value="25-9-7">25-9-7</option>
+    <option value="25-9-8">25-9-8</option>
+  </select>
+  <button type="button" class="btn btn-primary" id="listfile">
+    listfile
+  </button>
+  <div class="card" id="list_result" style="margin-bottom: 50px">hello</div>
+
+  <!--getfile-->
+  <select id="get_cameraID" style="visibility: hidden">
+  </select>
+  <button type="button" class="btn btn-primary" id="getfile">
+    getfile
+  </button>
+  <img id="get_result" src="" alt="" class="figure-img img-fluid rounded " style="width: 500px">
+
+  <!--putfile-->
+  <input type="text" id="upload_filename" placeholder="upload_filename" value="test.jpg">
+  <button type="button" class="btn btn-primary" id="putfile">
+    putfile
+  </button>
+  <input type="file" id="file">
+
+</div>
 </body>
+
+<script>
+  let host = document.getElementById("host");
+  let port = document.getElementById("port");
+  let cameraID = document.getElementById("cameraID");
+  let date = document.getElementById("date");;
+
+  function syncDateList(idList){
+    const selectElement = document.getElementById("get_cameraID");
+    selectElement.innerHTML = idList.innerHTML;
+    idList.forEach(element => {
+      const option = document.createElement("option");
+      option.value = element;
+      option.textContent = element;
+      selectElement.appendChild(option);
+    });
+    selectElement.style.visibility = "visible";
+  }
+  // let dateList
+  document.getElementById("listfile").addEventListener("click", function () {
+    fetch(`http://${host.value}:${port.value}/api/listfile`,{
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        cameraID:cameraID.value,
+        date:date.value
+      }),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        document.getElementById("list_result").innerHTML = data.message;
+        syncDateList(data.message);
+      });
+  });
+
+  document.getElementById("getfile").addEventListener("click",getfile);
+  async function getfile() {
+    const filename = document.getElementById("get_cameraID").value;
+    const response = await fetch(`http://${host.value}:${port.value}/api/getfile`,{
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        cameraID:cameraID.value,
+        date:date.value,
+        filename:filename
+      }),
+    })
+    if (!response.ok) {
+      throw new Error(`HTTP错误: ${response.status}`);
+    }
+    let img = await response.blob();
+    const imagePreview = document.getElementById('get_result');
+    const imageUrl = URL.createObjectURL(img);
+    imagePreview.src = imageUrl;
+    imagePreview.onload = () => {
+      URL.revokeObjectURL(imageUrl);
+    };
+  }
+
+  document.getElementById("putfile").addEventListener("click",putfile);
+  async function putfile() {
+    const file = document.getElementById("file").files[0];
+    const upload_filename = document.getElementById("upload_filename").value;
+    if (!file) {
+      return  alert("请选择文件");
+    }
+    if (!upload_filename) {
+      return  alert("请输入文件名");
+    }
+    const Url0 = `http://${host.value}:${port.value}/api/putfile`;
+    const params = {
+      cameraID: cameraID.value,
+      date: date.value,
+      filename: upload_filename
+    };
+    const urlParams = new URLSearchParams(params);
+    const url = `${Url0}?${urlParams.toString()}`;
+    const formData = new FormData();
+    formData.append('file', file);
+
+    const response = await fetch(url,{
+      method: "POST",
+      body: formData,
+    })
+    if (response.status === 200) {
+      alert("上传成功");
+    }
+    if (!response.ok) {
+      throw new Error(`HTTP错误: ${response.status}`);
+    }
+  }
+</script>
 </html>

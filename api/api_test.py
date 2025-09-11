@@ -1,5 +1,6 @@
 from flask import Flask, request, jsonify, make_response,send_file
 from flask_cors import CORS
+from PIL import Image
 import os
 # import psycopg2
 # from psycopg2.extras import RealDictCursor
@@ -7,6 +8,8 @@ import os
 app = Flask(__name__)
 CORS(app)
 cameraList = ['camera1','camera2']
+ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
+
 # app.config['SECRET_KEY'] = '3b6dc7732e7647d85f0dcbb44b337b504d1cc03870a358d290f14409bb912217'  
 
 # def get_db_connection():
@@ -53,31 +56,66 @@ def listfile():
                 items = os.listdir(f"{dir_path}/{date}")
                 status = 'success'
                 message = items
+                return jsonify({'status':status,'message':message}),200
             else:
-                message = 'Date doesn\'t exist!'
+                message = '无当前日期文件'
         else:
-            message = 'Camera doesn\'t exist!'
+            message = '摄像头不存在'
     except:
-        message = 'request Params missing.'
-    return jsonify({'status':status,'message':message})
+        message = '请求参数错误'
+    return jsonify({'status':status,'message':message}),400
 
-# 定义getfile请求，返回文件目录
+# 定义getfile请求，返回图像
 @app.route('/api/getfile', methods=['POST'])
 def getfile():
     print('api/getfile Accessed.')
     data = request.json
-    try:
+    try: 
         cameraID, date, filename = data['cameraID'],data['date'],data['filename']
         dir_path = f"../images/{cameraID}/{date}/{filename}"
-        return send_file(dir_path, mimetype='image/jpeg')
+        return send_file(dir_path, mimetype='image/jpeg'),200
     except:
-        return jsonify({'status':'error','message':'File doesn\'t exist.'})
+        return jsonify({'status':'error','message':'文件不存在'}),400
+  
+@app.route('/api/putfile', methods=['POST'])
+def putfile():
+    print("api/putfile Accessed.")
+    status = 'error'
+    data = request.args.to_dict()
+    os.makedirs('images', exist_ok=True)
+    try:
+        cameraID, date, filename = data['cameraID'], data['date'], data['filename']
+    except:
+        return jsonify({'status':status,'message':'请求信息缺失'}),400
+    if 'file' not in request.files:
+        return jsonify({'status':status,'message': '未找到文件'}), 400
+    file = request.files['file']
+    if file.filename == '':
+        return jsonify({'status':status,'message': '未选择文件'}), 400
+    allowance = '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+    if file and allowance:
+        file_dir = os.path.join(f"images/{cameraID}/{date}/", filename)
+        file.save(file_dir)
+        
+        try:
+            with Image.open(file_dir) as img:
+                width, height = img.size
+                return jsonify({
+                    'status':'success',
+                    'message': '文件上传成功',
+                    'filename': filename,
+                    'size': f'{width}x{height}',
+                    'format': img.format
+                }), 200
+        except Exception as e:
+            return jsonify({'error': f'处理图像时出错: {str(e)}'}), 500
     
+    return jsonify({'error': '不支持的文件类型'}), 400
 
 # 定义页面路由，默认支持GET请求
-@app.route('/test', methods=['GET'])
+@app.route('/index', methods=['GET'])
 def test():
-    with open('index.html', 'rb', encoding='utf-8') as f:
+    with open('web/index.html', 'rb', encoding='utf-8') as f:
         html_content = f.read()
     response = make_response(html_content)
     response.headers["Content-Type"] = "text/html; charset=utf-8"
